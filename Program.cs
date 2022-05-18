@@ -1,26 +1,13 @@
 ﻿//Connection
 using Microsoft.Data.Sqlite;
+using LabManager.Database;
+using LabManager.Repositories;
 
-var connection = new SqliteConnection("Data Source=database.db");
-connection.Open();
+var databaseSetup = new DatabaseSetup();
 
-//Command
-var command = connection.CreateCommand();
-command.CommandText = @"
-    CREATE TABLE IF NOT EXISTS Computers(
-        id int not null primary key,
-        ram varchar(100) not null,
-        processor varchar(100) not null
-    );
-";
-
-//Execute
-command.ExecuteNonQuery();
-
-connection.Close();
+var computerRepository = new ComputerRepository();
 
 //Routing
-
 var modelName = args[0];
 var modelAction = args[1];
 
@@ -29,26 +16,10 @@ if(modelName == "Computer")
     if (modelAction == "List")
     {
         Console.WriteLine("List Computer");
-
-        //Connection
-        connection = new SqliteConnection("Data Source=database.db");
-        connection.Open();
-
-        //Command
-        command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Computers;";
-
-        //Execute
-        var reader = command.ExecuteReader();
-
-        while (reader.Read())
+        foreach (var computer in computerRepository.GetAll())
         {
-            Console.WriteLine(
-                "{0}, {1}, {2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2)
-            );
+            Console.WriteLine("{0}, {1}, {2}", computer.Id, computer.Ram, computer.Processor);
         }
-
-        connection.Close();
     }
 
     if (modelAction == "New")
@@ -58,11 +29,11 @@ if(modelName == "Computer")
         var processor = args[4];
 
         //Connection
-        connection = new SqliteConnection("Data Source=database.db");
+        var connection = new SqliteConnection("Data Source=database.db");
         connection.Open();
 
         //Command
-        command = connection.CreateCommand();
+        var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor)";
         command.Parameters.AddWithValue("$id", id);
         command.Parameters.AddWithValue("$ram", ram);
@@ -72,7 +43,7 @@ if(modelName == "Computer")
         command.ExecuteNonQuery();
         connection.Close();
 
-        /* Console.WriteLine("New Computer");
-        Console.WriteLine("{0}, {1}, {2}", id, ram, processor); */
+        Console.WriteLine("New Computer");
+        /* Console.WriteLine("{0}, {1}, {2}", id, ram, processor); */
     }
 }
