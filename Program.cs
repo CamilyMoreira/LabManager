@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 using LabManager.Database;
 using LabManager.Repositories;
+using LabManager.Models;
 
 var databaseConfig = new DatabaseConfig(); //objeto; n precisa ficar criando nas classes 
 
@@ -26,26 +27,13 @@ if(modelName == "Computer")
 
     if (modelAction == "New")
     {
+        Console.WriteLine("New Computer");
         var id = Convert.ToInt32(args[2]);
         var ram = args[3];
         var processor = args[4];
 
-        //Connection
-        var connection = new SqliteConnection(databaseConfig.ConnectionString);
-        connection.Open();
+        var computer = new Computer(id, ram, processor);
 
-        //Command
-        var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor)";
-        command.Parameters.AddWithValue("$id", id);
-        command.Parameters.AddWithValue("$ram", ram);
-        command.Parameters.AddWithValue("$processor", processor);
-
-        //Execute
-        command.ExecuteNonQuery();
-        connection.Close();
-
-        Console.WriteLine("New Computer");
-        /* Console.WriteLine("{0}, {1}, {2}", id, ram, processor); */
+        computerRepository.Save(computer);
     }
 }
