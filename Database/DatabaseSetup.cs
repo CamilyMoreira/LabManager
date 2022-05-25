@@ -2,10 +2,12 @@
 using Microsoft.Data.Sqlite;
 namespace LabManager.Database;
 
-class DatabaseSetup
+class DatabaseSetup //precisa de uma dependencia (outra classe)
 {
-    public DatabaseSetup()
+    private readonly DatabaseConfig _databaseConfig; //readonly serve para n pode mudar o valor e o _ serve para n dar conflito (para n usar o this)
+    public DatabaseSetup(DatabaseConfig databaseConfig)
     {
+        _databaseConfig = databaseConfig;
         CreateComputerTable();
         CreateLabTable();
     }
@@ -13,7 +15,7 @@ class DatabaseSetup
     private void CreateComputerTable()
     {
 
-    var connection = new SqliteConnection("Data Source=database.db");
+    var connection = new SqliteConnection(_databaseConfig.ConnectionString);
     connection.Open();
 
     //Command
