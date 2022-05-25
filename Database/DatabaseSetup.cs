@@ -9,7 +9,6 @@ class DatabaseSetup //precisa de uma dependencia (outra classe)
     {
         _databaseConfig = databaseConfig;
         CreateComputerTable();
-        CreateLabTable();
     }
 
     private void CreateComputerTable()
@@ -32,14 +31,4 @@ class DatabaseSetup //precisa de uma dependencia (outra classe)
     command.ExecuteNonQuery();
     connection.Close();
     }
-
-    private void CreateLabTable()
-    {
-
-    }
-
-    /* public void CreateUsersTable()
-    {
-
-    } */
 }
