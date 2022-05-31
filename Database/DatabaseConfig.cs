@@ -1,3 +1,5 @@
+//KK
+
 namespace LabManager.Database;
 
 class DatabaseConfig
