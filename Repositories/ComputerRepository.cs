@@ -42,7 +42,7 @@ class ComputerRepository
         return computers;
     }
 
-    public void Save(Computer computer)
+    public Computer Save(Computer computer)
     {
         //Connection
         var connection = new SqliteConnection(_databaseConfig.ConnectionString);
@@ -58,5 +58,30 @@ class ComputerRepository
         //Execute
         command.ExecuteNonQuery();
         connection.Close();
+
+        return computer;
+    }
+
+    public Computer GetById(int id)
+    {
+        //Connection
+        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        connection.Open();
+
+        //Command
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Computers WHERE id = $id";
+        command.Parameters.AddWithValue("$id", id);
+
+        //Execute
+        var reader = command.ExecuteReader();
+        reader.Read();
+        var ram = reader.GetString(1);
+        var processor = reader.GetString(2);
+        var computer = new Computer(id, ram, processor);
+
+        connection.Close();
+
+        return computer;
     }
 }
