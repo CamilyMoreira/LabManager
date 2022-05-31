@@ -104,4 +104,20 @@ class ComputerRepository
 
         return computer;
     }
+
+    public void Delete(int id)
+    {
+        //Connection
+        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        connection.Open();
+
+        //Command
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM Computers WHERE id = $id";
+        command.Parameters.AddWithValue("$id", id);
+
+        //Execute
+        command.ExecuteNonQuery();
+        connection.Close();
+    }
 }
