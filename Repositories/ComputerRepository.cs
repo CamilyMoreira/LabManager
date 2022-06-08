@@ -29,10 +29,7 @@ class ComputerRepository
 
         while (reader.Read())
         {
-            var id = reader.GetInt32(0);
-            var ram = reader.GetString(1);
-            var processor = reader.GetString(2);
-            var computer = new Computer(id, ram, processor);
+            var computer = ReaderToComputer(reader);
             computers.Add(computer);
 
             /* Console.WriteLine("{0}, {1}, {2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2)); */
@@ -74,14 +71,12 @@ class ComputerRepository
         command.Parameters.AddWithValue("$id", id);
 
         //Execute
-        var reader = command.ExecuteReader();
+        var reader = command.ExecuteReader(); 
         reader.Read();
-        var ram = reader.GetString(1);
-        var processor = reader.GetString(2);
-        var computer = new Computer(id, ram, processor);
+        
+        var computer = ReaderToComputer(reader);
 
         connection.Close();
-
         return computer;
     }
 
@@ -119,5 +114,36 @@ class ComputerRepository
         //Execute
         command.ExecuteNonQuery();
         connection.Close();
+    }
+
+    public bool ExistsById(int id)
+    {
+        //Connection
+        var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+        connection.Open();
+
+        //Command
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT count(id) FROM Computers WHERE id = $id";
+        command.Parameters.AddWithValue("$id", id);
+
+        //Execute
+        /* var reader = command.ExecuteReader();
+        reader.Read();
+
+        var result = reader.GetBoolean(0); */
+
+        bool result = Convert.ToBoolean(command.ExecuteScalar());
+
+        connection.Close();
+
+        return result;
+    }
+
+    private Computer ReaderToComputer(SqliteDataReader reader) 
+    {
+        var computer = new Computer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2)); 
+
+        return computer;
     }
 }
