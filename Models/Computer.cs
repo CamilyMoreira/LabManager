@@ -6,6 +6,8 @@ class Computer
     public String Ram { get; set; }
     public String Processor { get; set; }
 
+    public Computer() {}
+
     public Computer(int id, String ram, String processor)
     {
         Id = id;

@@ -1,6 +1,7 @@
 //Connection
 using Microsoft.Data.Sqlite;
 namespace LabManager.Database;
+using Dapper;
 
 class DatabaseSetup //precisa de uma dependencia (outra classe)
 {
@@ -9,26 +10,39 @@ class DatabaseSetup //precisa de uma dependencia (outra classe)
     {
         _databaseConfig = databaseConfig;
         CreateComputerTable();
+        CreateLabTable();
     }
 
     private void CreateComputerTable()
     {
 
-    var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+    using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
     connection.Open();
 
     //Command
-    var command = connection.CreateCommand();
-    command.CommandText = @"
+    connection.Execute(@"
         CREATE TABLE IF NOT EXISTS Computers(
             id int not null primary key,
             ram varchar(100) not null,
             processor varchar(100) not null
         );
-    ";
+    ");
+    }
 
-    //Execute
-    command.ExecuteNonQuery();
-    connection.Close();
+    private void CreateLabTable()
+    {
+
+    using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
+    connection.Open();
+
+    //Command
+    connection.Execute(@"
+        CREATE TABLE IF NOT EXISTS Labs(
+            id int not null primary key,
+            number int not null,
+            name varchar(100) not null,
+            block char(1) not null
+        );
+    ");
     }
 }

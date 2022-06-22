@@ -5,60 +5,60 @@ using Dapper;
 
 namespace LabManager.Repositories;
 
-class ComputerRepository
+class LabRepository
 {
     private readonly DatabaseConfig _databaseConfig;
 
-    public ComputerRepository(DatabaseConfig databaseConfig)
+    public LabRepository(DatabaseConfig databaseConfig)
     {
         _databaseConfig = databaseConfig;
     }
-    public List<Computer> GetAll()
+    public List<Lab> GetAll()
     {
         //Connection
         using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
 
         //Command
-        var computers = connection.Query<Computer>("SELECT * FROM Computers").ToList();
+        var computers = connection.Query<Lab>("SELECT * FROM Labs").ToList();
 
         return computers;
     }
 
-    public Computer Save(Computer computer)
+    public Lab Save(Lab lab)
     {
         //Connection
         using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
 
         //Command
-        connection.Execute("INSERT INTO Computers VALUES(@Id, @Ram, @Processor)", computer);
+        connection.Execute("INSERT INTO Labs VALUES(@Id, @Namber, @Name, @Block)", lab);
 
-        return GetById(computer.Id);
+        return GetById(lab.Id);
     }
 
-    public Computer GetById(int id)
+    public Lab GetById(int id)
     {
         //Connection
         using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
 
         //Command
-        var computer = connection.QuerySingle<Computer>("SELECT * FROM Computers WHERE id = @Id;", new{Id = id});
+        var lab = connection.QuerySingle<Lab>("SELECT * FROM Labs WHERE id = @Id;", new{Id = id});
 
-        return computer;
+        return lab;
     }
 
-    public Computer Update(Computer computer)
+    public Lab Update(Lab lab)
     {
         //Connection
         using var connection = new SqliteConnection(_databaseConfig.ConnectionString);
         connection.Open();
 
         //Command
-        connection.Execute("UPDATE Computers SET ram = @Ram, processor = @Processor WHERE id = @Id", computer);
+        connection.Execute("UPDATE Labs SET number = @Number, name = @Name, block = @Block WHERE id = @Id", lab);
 
-        return GetById(computer.Id);
+        return GetById(lab.Id);
     }
 
     public void Delete(int id)
@@ -68,7 +68,7 @@ class ComputerRepository
         connection.Open();
 
         //Command
-        connection.Execute("DELETE FROM Computers WHERE id = @Id", new{Id = id});
+        connection.Execute("DELETE FROM Labs WHERE id = @Id", new{Id = id});
     }
 
     public bool ExistsById(int id)
@@ -78,7 +78,7 @@ class ComputerRepository
         connection.Open();
 
         //Command
-        var result = connection.ExecuteScalar<Boolean>("SELECT count(id) FROM Computers WHERE id = @Id", new{Id = id});
+        var result = connection.ExecuteScalar<Boolean>("SELECT count(id) FROM Labs WHERE id = @Id", new{Id = id});
 
         return result;
     }

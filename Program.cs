@@ -10,11 +10,14 @@ var databaseSetup = new DatabaseSetup(databaseConfig);
 
 var computerRepository = new ComputerRepository(databaseConfig);
 
+var labRepository = new LabRepository(databaseConfig);
+
 //Routing
 var modelName = args[0];
 var modelAction = args[1];
 
 if(modelName == "Computer")
+
 {
     if (modelAction == "List")
     {
@@ -44,7 +47,7 @@ if(modelName == "Computer")
         if(computerRepository.ExistsById(id))
         {
             var computer = computerRepository.GetById(id);
-            Console.WriteLine($"{computer.Id}, {computer.Id}, {computer.Processor}");
+            Console.WriteLine($"{computer.Id}, {computer.Ram}, {computer.Processor}");
         }
         else
         {
@@ -83,6 +86,82 @@ if(modelName == "Computer")
         else
         {
             Console.WriteLine($"O computador {id} não existe");
+        }
+        
+    }
+}
+
+if(modelName == "Lab")
+{
+    if (modelAction == "List")
+    {
+        Console.WriteLine("List Lab");
+        foreach (var lab in labRepository.GetAll())
+        {
+            Console.WriteLine("{0}, {1}, {2}, {3}", lab.Id, lab.Number, lab.Name, lab.Block);
+        }
+    }
+
+    if (modelAction == "New")
+    {
+        Console.WriteLine("New Lab");
+        var id = Convert.ToInt32(args[2]);
+        var number = Convert.ToInt32(args[3]);
+        var name = args[4];
+        var block = Convert.ToChar(args[5]);
+
+        var lab = new Lab(id, number, name, block);
+
+        labRepository.Save(lab);
+    }
+
+    if (modelAction == "Show")
+    {
+        var id = Convert.ToInt32(args[2]);
+
+        if(labRepository.ExistsById(id))
+        {
+            var lab = labRepository.GetById(id);
+            Console.WriteLine($"{lab.Id}, {lab.Number}, {lab.Name}, {lab.Block}");
+        }
+        else
+        {
+            Console.WriteLine($"O laboratorio {id} não existe");
+        }
+    }
+
+    if (modelAction == "Update")
+    {
+        var id = Convert.ToInt32(args[2]);
+
+        if(labRepository.ExistsById(id))
+        {
+            var number = Convert.ToInt32(args[3]);
+            var name = args[4];
+            var block = Convert.ToChar(args[5]);
+
+            var lab = new Lab(id, number, name, block);
+
+            lab = labRepository.Update(lab);
+        }
+        else
+        {
+            Console.WriteLine($"O laboratorio {id} não existe");
+        }
+
+    }
+
+    if (modelAction == "Delete")
+    {
+        var id = Convert.ToInt32(args[2]);
+
+        if(labRepository.ExistsById(id))
+        {
+            labRepository.Delete(id);
+        }
+        else
+        {
+            Console.WriteLine($"O laboratorio {id} não existe");
         }
         
     }
